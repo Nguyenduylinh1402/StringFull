@@ -20,33 +20,84 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 	private final static String APPTAB_SAMSUNG_TAB = "Apps";
 	private final static String FILESTRING_RECEIVE_FILES = "FileString Received Files";
 	private final static String FILESTRING_SENDER_FOLDER = "Sta 002";
-	private final static String FILE_NAME = "Screenshot taosua07.fcs";
+	private final static String FILE_NAME = "Screenshot taosua20.fcs";
 	private final static String EMAIL_SHARE_FILE = "sta001@yopmail.com";
 	private final static String PASSWORD = "1234";
+
+	public final static int ACTION_CLICK = 0;
+	public final static int ACTION_TAKE_SCREENSHOT = 1;
+
 	public static UiScrollable scrollableListView = new UiScrollable(
 			new UiSelector().className("android.widget.ListView").scrollable(
 					true));
 
-	// com.filestring.lattedouble:id/file_list_listview
-
 	public void testDemo() throws UiObjectNotFoundException, RemoteException,
 			InterruptedException {
-		//Thread.sleep(10000);
+		loggerd(StringFileImprovement1.class.getName(), "Start Testing");
+
+		loggerd(StringFileImprovement1.class.getName(), "Launch FileString App");
 		launchFileStringApp(APP_NAME);
+
+		loggerd(StringFileImprovement1.class.getName(), "Sign In");
 		signIn(EMAIL_SHARE_FILE, PASSWORD);
-//		Thread.sleep(30000);
-//		openNotificationPanel();
-//		notificationCheckFileUploaded("Sta 001 shared file Screenshot taosua02.fcs with you");
-		// Đoạn này sử dụng lại checkFileInAllFile
-		while(Comunication.getFlat()==1){
-			fileFileReceivedFrom(FILESTRING_RECEIVE_FILES);
+
+		loggerd(StringFileImprovement1.class.getName(), "Sleeping 60s ...");
+		Thread.sleep(60000);
+
+		// loggerd(StringFileImprovement1.class.getName(),
+		// "Check Received Notification");
+		// openNotificationPanel();
+		// notificationCheckFileUploaded("Sta 001 shared file Screenshot taosua02.fcs with you");
+
+		clickListViewItem(FILESTRING_RECEIVE_FILES, ACTION_CLICK);
+
+		clickListViewItem(FILESTRING_SENDER_FOLDER, ACTION_CLICK);
+
+		clickListViewItem(FILE_NAME, ACTION_TAKE_SCREENSHOT);
+
+		loggerd(StringFileImprovement1.class.getName(), "Sign Out");
+		signOut();
+
+		loggerd(StringFileImprovement1.class.getName(), "Test Complete");
+	}
+
+	public void clickListViewItem(String name, int action)
+			throws UiObjectNotFoundException {
+
+		UiScrollable listView = new UiScrollable(
+				new UiSelector().className("android.widget.ListView"));
+
+		listView.setMaxSearchSwipes(100);
+		listView.scrollTextIntoView(name);
+		listView.waitForExists(5000);
+		UiSelector listViewItemSelector;
+
+		listViewItemSelector = new UiSelector()
+				.className(android.widget.TextView.class.getName());
+		UiObject listViewItem;
+		for (int i = 0; i < 10; i++) {
+			try {
+				Thread.sleep(5000);
+				listViewItem = listView.getChildByText(listViewItemSelector,
+						name);
+
+				if (listViewItem != null) {
+					if (action == ACTION_CLICK) {
+						listViewItem.click();
+						System.out
+								.println("\"" + name + "\" item was clicked.");
+					} else if (action == ACTION_TAKE_SCREENSHOT) {
+						// TAKE SCREENSHOT
+					}
+
+					break;
+				}
+			} catch (Exception e) {
+				System.out.println("Did not find match for "
+						+ e.getLocalizedMessage());
+			}
 		}
-		
 
-		fileFileReceivedFrom(FILESTRING_SENDER_FOLDER);
-		// 1Anh Muon Em Song Sao - Bao Anh.fcs
-
-		fileFileReceivedFrom(FILE_NAME);
 	}
 
 	public static void fileFileReceivedFrom(final String fileName) {
@@ -69,46 +120,12 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 
 				if (fileCatch != null) {
 					Log.d("", "File: " + fileName + " Here");
-					fileCatch.clickAndWaitForNewWindow();
-					break;
-				}
-			} catch (UiObjectNotFoundException e) {
-				System.out.println("Did not find match for "
-						+ e.getLocalizedMessage());
-				// test.getUiDevice().pressBack();
-			}
-
-		}
-
-	}
-
-	public static void checkFileExistInAllFile(final String fileName) {
-
-		UiSelector fileSelector;
-		fileSelector = new UiSelector().className(android.widget.TextView.class
-				.getName());
-		UiObject fileCatch;
-
-		for (int i = 0; i < 10; i++) {
-
-			try {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				fileCatch = scrollableListView.getChildByText(fileSelector,
-						fileName, true);
-
-				if (fileCatch != null) {
-					Log.d("", "File: " + fileName + " Here");
 					// fileCatch.clickAndWaitForNewWindow();
 					break;
 				}
 			} catch (UiObjectNotFoundException e) {
 				System.out.println("Did not find match for "
 						+ e.getLocalizedMessage());
-				// test.getUiDevice().pressBack();
 			}
 
 		}
@@ -144,7 +161,7 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 			} catch (Exception e) {
 				System.out.println("Did not find match for "
 						+ e.getLocalizedMessage());
-				//getUiDevice().pressBack();
+				// getUiDevice().pressBack();
 			}
 		}
 	}
@@ -168,8 +185,8 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 				new UiSelector().text(APPTAB_SAMSUNG_TAB));
 		appsTab.clickAndWaitForNewWindow();
 
-		UiScrollable appViews = new UiScrollable(
-				new UiSelector().className("android.view.View").scrollable(true));
+		UiScrollable appViews = new UiScrollable(new UiSelector().className(
+				"android.view.View").scrollable(true));
 		appViews.setAsHorizontalList();
 		appViews.scrollToBeginning(10);
 
@@ -224,6 +241,26 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 		if (signIn.exists()) {
 			signIn.clickAndWaitForNewWindow(10000);
 		}
+	}
+
+	private void signOut() throws UiObjectNotFoundException {
+		UiObject hamberger = new UiObject(new UiSelector().resourceId(
+				"android:id/up").className("android.widget.ImageView"));
+		hamberger.click();
+
+		UiObject info = new UiObject(new UiSelector().resourceId(
+				"com.filestring.lattedouble:id/drawer_email").className(
+				"android.widget.TextView"));
+		info.clickAndWaitForNewWindow();
+
+		UiObject signout = new UiObject(
+				new UiSelector().text("Sign Out from FileString"));
+		signout.clickAndWaitForNewWindow();
+	}
+
+	public static void loggerd(final String tag, final String message) {
+		System.out.println(tag + ": " + message);
+		Log.d(tag, message);
 	}
 	// CODE:END
 }
