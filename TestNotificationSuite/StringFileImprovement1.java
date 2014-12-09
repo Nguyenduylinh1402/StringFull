@@ -31,7 +31,7 @@ public class StringFileImprovement1 extends UiAutomatorTestCase {
 	private final static String EMAIL_SHARE_FILE = "sta001@yopmail.com";
 	private final static String PASSWORD = "1234";
 	private final static String STRING_A_FILE = "String a File";
-	private final static String FILE_NAME = "Screenshot taosua20.png";
+	private final static String FILE_NAME = "Screenshot tao1.png";
 
 	public final static int ACTION_CLICK = 0;
 	public final static int ACTION_TAKE_SCREENSHOT = 1;

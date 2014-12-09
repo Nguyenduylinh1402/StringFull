@@ -1,4 +1,4 @@
-package TestNotification.TestNotificationSuite;
+package TestNotification.VerifyFileReceived;
 
 import android.os.RemoteException;
 import android.util.Log;
@@ -10,7 +10,7 @@ import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
 
-public class VerifyStringFileSuccess extends UiAutomatorTestCase {
+public class VerifyFileMp3 extends UiAutomatorTestCase {
 
 	// CODE:START
 	private final static String APPTRAY_MOTOROLA = "Apps";
@@ -19,8 +19,8 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 	private final static String APP_NAME = "FileString";
 	private final static String APPTAB_SAMSUNG_TAB = "Apps";
 	private final static String FILESTRING_RECEIVE_FILES = "FileString Received Files";
-	private final static String FILESTRING_SENDER_FOLDER = "Sta 002";
-	private final static String FILE_NAME = "Screenshot tao1.fcs";
+	private final static String FILESTRING_SENDER_FOLDER = "sta 005";
+	private final static String FILE_NAME = "Tonight I Celebrate My Love For You - Peabo Bryson Roberta Flack.fcs";
 	private final static String EMAIL_SHARE_FILE = "sta001@yopmail.com";
 	private final static String PASSWORD = "1234";
 
@@ -33,15 +33,15 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 
 	public void testDemo() throws UiObjectNotFoundException, RemoteException,
 			InterruptedException {
-		loggerd(StringFileImprovement1.class.getName(), "Start Testing");
+		loggerd(VerifyFileMp3.class.getName(), "Start Testing");
 
-		loggerd(StringFileImprovement1.class.getName(), "Launch FileString App");
+		loggerd(VerifyFileMp3.class.getName(), "Launch FileString App");
 		launchFileStringApp(APP_NAME);
 
-		loggerd(StringFileImprovement1.class.getName(), "Sign In");
+		loggerd(VerifyFileMp3.class.getName(), "Sign In");
 		signIn(EMAIL_SHARE_FILE, PASSWORD);
 
-		loggerd(StringFileImprovement1.class.getName(), "Sleeping 60s ...");
+		loggerd(VerifyFileMp3.class.getName(), "Sleeping 60s ...");
 		Thread.sleep(60000);
 
 		// loggerd(StringFileImprovement1.class.getName(),
@@ -55,10 +55,10 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 
 		clickListViewItem(FILE_NAME, ACTION_TAKE_SCREENSHOT);
 
-		loggerd(StringFileImprovement1.class.getName(), "Sign Out");
+		loggerd(VerifyFileMp3.class.getName(), "Sign Out");
 		signOut();
 
-		loggerd(StringFileImprovement1.class.getName(), "Test Complete");
+		loggerd(VerifyFileMp3.class.getName(), "Test Complete");
 	}
 
 	public void clickListViewItem(String name, int action)
@@ -69,7 +69,7 @@ public class VerifyStringFileSuccess extends UiAutomatorTestCase {
 
 		listView.setMaxSearchSwipes(100);
 		listView.scrollTextIntoView(name);
-		listView.waitForExists(5000);
+		listView.waitForExists(2000);
 		UiSelector listViewItemSelector;
 
 		listViewItemSelector = new UiSelector()

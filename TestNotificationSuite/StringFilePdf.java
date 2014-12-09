@@ -27,40 +27,56 @@ public class StringFilePdf extends UiAutomatorTestCase {
 	private final static String APPTAB_MOTOROLA = "Apps";
 	private final static String APPTAB_SAMSUNG_TAB = "Apps";
 	private final static String APP_NAME = "FileString";
-	private final static String EMAIL_SIGNIN = "sta19.2@yopmail.com";
+	private final static String EMAIL_SIGNIN = "sta005@yopmail.com";
 	private final static String EMAIL_SHARE_FILE = "sta001@yopmail.com";
 	private final static String PASSWORD = "1234";
 	private final static String STRING_A_FILE = "String a File";
 	private final static String FILE_NAME = "English Classes-Preintermediate.pdf";
+
+	public final static int ACTION_CLICK = 0;
+	public final static int ACTION_TAKE_SCREENSHOT = 1;
+
+	// private final static String FILE_NAME = "Avtivities.pdf";
 	private final static String FILE_UPLOADED_SUCCESSFUL = "File uploaded";
 	// Scroll không có className không scroll list nhé
 	public static UiScrollable scrollableListView = new UiScrollable(
 			new UiSelector().className("android.widget.ListView").scrollable(
 					true));
 
-	// =====================Sign In field================================//
-
-	// =====================End Sign In field==========================//
-
-	// Method Name has to name with the first word is "test"
 	public void testStringFile() throws UiObjectNotFoundException,
 			RemoteException {
-		System.out.println("testcase execution started");
-		// CODE:START
+		loggerd(StringFilePdf.class.getName(), "Start Testing");
+
+		loggerd(StringFilePdf.class.getName(), "Launch FileString App");
 		launchFileStringApp(APP_NAME);
-		 signIn(EMAIL_SIGNIN, PASSWORD);
-		 menuStringFile(STRING_A_FILE);
-		 selectFile(FILE_NAME);
-		 inputEmailShare(EMAIL_SHARE_FILE);
-		 sendStringFile();
-		 openNotificationPanel();
-		 notificationCheckFileUploaded(FILE_UPLOADED_SUCCESSFUL);
-		 checkFileExistInAllFile(FILE_NAME);
-		 signOut();
-		// CODE:END
-		System.out.println("testcase execution completed");
+
+		loggerd(StringFilePdf.class.getName(), "Sign In");
+		signIn(EMAIL_SIGNIN, PASSWORD);
+
+		loggerd(StringFilePdf.class.getName(), "String a file");
+		menuStringFile(STRING_A_FILE);
+
+		loggerd(StringFilePdf.class.getName(), "Select file resource");
+		selectFile(FILE_NAME);
+
+		inputEmailShare(EMAIL_SHARE_FILE);
+		sendStringFile();
+
+		openNotificationPanel();
+		loggerd(StringFilePdf.class.getName(), "Check File Uploaded");
+		notificationCheckFileUploaded(FILE_UPLOADED_SUCCESSFUL);
+
+		loggerd(StringFilePdf.class.getName(),
+				"Verify File In List All File");
+		clickListViewItem(FILE_NAME, ACTION_TAKE_SCREENSHOT);
+
+		loggerd(StringFilePdf.class.getName(), "Sign Out");
+		signOut();
+
+		loggerd(StringFilePdf.class.getName(), "Test Complete");
 	}
 
+	// Sign Out
 	private void signOut() throws UiObjectNotFoundException {
 		UiObject hamberger = new UiObject(new UiSelector().resourceId(
 				"android:id/up").className("android.widget.ImageView"));
@@ -76,41 +92,48 @@ public class StringFilePdf extends UiAutomatorTestCase {
 		signout.clickAndWaitForNewWindow();
 	}
 
-	public static void checkFileExistInAllFile(final String fileName) {
+	//
+	public void clickListViewItem(String name, int action)
+			throws UiObjectNotFoundException {
 
-		UiSelector fileSelector;
-		fileSelector = new UiSelector().className(android.widget.TextView.class
-				.getName());
-		UiObject fileCatch;
+		UiScrollable listView = new UiScrollable(
+				new UiSelector().className("android.widget.ListView"));
 
+		listView.setMaxSearchSwipes(100);
+		listView.scrollTextIntoView(name);
+		listView.waitForExists(2000);
+		UiSelector listViewItemSelector;
+
+		listViewItemSelector = new UiSelector()
+				.className(android.widget.TextView.class.getName());
+		UiObject listViewItem;
 		for (int i = 0; i < 10; i++) {
-
 			try {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				fileCatch = scrollableListView.getChildByText(fileSelector,
-						fileName, true);
+				Thread.sleep(5000);
+				listViewItem = listView.getChildByText(listViewItemSelector,
+						name);
 
-				if (fileCatch != null) {
-					Log.d("", "File: " + fileName + " Here");
-					//fileCatch.clickAndWaitForNewWindow();
+				if (listViewItem != null) {
+					if (action == ACTION_CLICK) {
+						listViewItem.click();
+						System.out.println("\"" + name
+								+ "\" item was clicked.");
+					} else if (action == ACTION_TAKE_SCREENSHOT) {
+						// TAKE SCREENSHOT
+					}
+
 					break;
 				}
-			} catch (UiObjectNotFoundException e) {
+			} catch (Exception e) {
 				System.out.println("Did not find match for "
 						+ e.getLocalizedMessage());
-				// test.getUiDevice().pressBack();
 			}
-
 		}
 
 	}
 
 	// xu ly lai phan quet notification list
-	private void notificationCheckFileUploaded(String keyCheckState) {
+	public void notificationCheckFileUploaded(String keyCheckState) {
 
 		// why scrollable(=true) this function not work
 		UiScrollable scrollableScrollView = new UiScrollable(new UiSelector()
@@ -143,17 +166,23 @@ public class StringFilePdf extends UiAutomatorTestCase {
 		}
 	}
 
+	// Open Notification Bar
 	public static void openNotificationPanel() {
 		UiDevice.getInstance().openNotification();
 	}
 
+	// Send String File
 	private void sendStringFile() throws UiObjectNotFoundException {
+
 		UiObject send = new UiObject(
 				new UiSelector()
 						.resourceId("com.filestring.lattedouble:id/menu_recipients_send"));
-		send.clickAndWaitForNewWindow(5000);
+		if (send.exists()) {
+			send.clickAndWaitForNewWindow(5000);
+		}
 	}
 
+	// Input Email Recipient
 	private void inputEmailShare(String emailShareFile)
 			throws UiObjectNotFoundException {
 		UiObject emailField = new UiObject(
@@ -165,21 +194,12 @@ public class StringFilePdf extends UiAutomatorTestCase {
 
 	private void selectFile(String fileName) throws UiObjectNotFoundException {
 		// select FileManager
-		UiObject fileManager = new UiObject(new UiSelector().resourceId(
-				"com.filestring.lattedouble:id/source_title").text(
-				"File Manager"));
-		fileManager.clickAndWaitForNewWindow();
-		// select folder "data"
-		UiObject folderResource = scrollableListView.getChildByText(
-				new UiSelector().resourceId("com.rhmsoft.fm:id/name"), "data");
-		folderResource.clickAndWaitForNewWindow();
-		// select file with file name is "FILE_NAME"
-		UiObject fileResource = scrollableListView.getChildByText(
-				new UiSelector().resourceId("com.rhmsoft.fm:id/name"),
-				FILE_NAME);
-		fileResource.clickAndWaitForNewWindow();
+		clickListViewItem("File Manager", ACTION_CLICK);
+		clickListViewItem("data", ACTION_CLICK);
+		clickListViewItem(fileName, ACTION_CLICK);
 	}
 
+	// Open Menu String File
 	private void menuStringFile(String actionStringFrom)
 			throws UiObjectNotFoundException {
 		UiObject menuStringFile = new UiObject(new UiSelector().resourceId(
@@ -193,6 +213,7 @@ public class StringFilePdf extends UiAutomatorTestCase {
 		menu.clickAndWaitForNewWindow();
 	}
 
+	// Sign In
 	private void signIn(String email, String password)
 			throws UiObjectNotFoundException {
 		UiObject emailSignIn = new UiObject(
@@ -219,6 +240,7 @@ public class StringFilePdf extends UiAutomatorTestCase {
 		}
 	}
 
+	// Launch App
 	protected static void launchAppCalled(String nameOfAppToLaunch)
 			throws UiObjectNotFoundException {
 		UiScrollable appViews = new UiScrollable(
@@ -286,7 +308,7 @@ public class StringFilePdf extends UiAutomatorTestCase {
 		UiObject appToLaunch;
 
 		for (int i = 0; i < maxSearchSwipes; i++) {
-			//if do not try/catch: search app not work well
+			// if do not try/catch: search app not work well
 			try {
 				appToLaunch = appViews.getChildByText(selector, appName);
 				if (appToLaunch != null) {
@@ -305,6 +327,11 @@ public class StringFilePdf extends UiAutomatorTestCase {
 				System.out.println("scrolling forward 1 page of apps.");
 			}
 		}
+	}
+
+	public static void loggerd(final String tag, final String message) {
+		System.out.println(tag + ": " + message);
+		Log.d(tag, message);
 	}
 
 }
